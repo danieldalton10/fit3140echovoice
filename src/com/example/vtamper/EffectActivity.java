@@ -2,6 +2,8 @@ package com.example.vtamper;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +19,8 @@ public class EffectActivity extends Activity
     private final String TAG = "VTamper";
     private AudioClip audioClip;
     private Context context;
+    private String loadFilePath;
+    final int PICK_WAVE = 1;
 
     /** Called when the activity is first created. */
     @Override
@@ -30,24 +34,63 @@ public class EffectActivity extends Activity
     }
 
     void load () {
-        // TODO: Do some stuff display a file picker and save the path to the filename variable
-        String filename = "/sdcard/original.wav";
+        Intent chooseFile;
+        Intent intent;
+        chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+        chooseFile.setType("audio/x-wav/*"); // Doesn't really work for some reason
+        intent = Intent.createChooser(chooseFile, "Choose a file");
+        startActivityForResult(intent, PICK_WAVE);
+    }
+
+    void handleLoadFile (String filename) {
         AudioClip.AudioFile audioFile = audioClip.new AudioFile ();
         int duration = Toast.LENGTH_SHORT;
         CharSequence text = "";
-        try {
-            audioFile.loadFile (filename);
-        } catch (FileNotFoundException e) {
-            text = "File not found";
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            finish ();
-        } catch (IOException e) {
-            text = "An IO error occurred.";
+        if (filename.equals ("")) {
+            text = "An error occurred loading the file.";
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
             finish ();
         }
+
+        try {
+            audioFile.loadFile (filename);
+        } catch (FileNotFoundException e) {
+            text = "The file was not found.";
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            finish ();
+        } catch (IOException e) {
+            text = "An IO Error has occurred.";
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            finish ();
+        } catch (Exception e) { // All exceptions are the same to us the file didn't load in any case
+            text = "There was a problem loading the file";
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            finish ();
+        } finally {
+            text = "Audio loaded";
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+        case PICK_WAVE: {
+            if (resultCode == RESULT_OK){
+                Uri uri = data.getData();
+                String filePath = uri.getPath();
+                Log.d(TAG, "path = "+filePath);
+                handleLoadFile (filePath);
+                return;
+            }
+        }
+        }
+        handleLoadFile (""); // A way of handling errors
     }
 
     public void onReverse (View view) {
