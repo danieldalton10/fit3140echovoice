@@ -2,8 +2,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class AudioClip {
+    public enum Option {
+        REVERSE, ECHO
+    }
+
     private interface Effect {
         public void perform ();
     }
@@ -18,6 +23,49 @@ public class AudioClip {
         this.newHeader = new byte[44];
     }
 
+    public class EffectArguments {
+        private float volumeFactor = 1;
+        private int startTime = 0;
+        private int endTime = -1;
+        private int repeats = 1;
+
+        public float getVolume () {
+            return volumeFactor;
+        }
+
+        public int getStartTime () {
+            return startTime;
+        }
+
+        public int getEndTime () {
+            return endTime;
+        }
+
+        public int getRepeats () {
+            return repeats;
+        }
+
+        public EffectArguments setVolume (float volume) {
+            volumeFactor = volume;
+            return this;
+        }
+
+        public EffectArguments setStart (int start) {
+            startTime = start;
+            return this;
+        }
+
+        public EffectArguments setEnd (int end) {
+            endTime = end;
+            return this;
+        }
+
+        public EffectArguments setRepeats (int r) {
+            repeats = r;
+            return this;
+        }
+    }
+
     public class AudioFile {
         public void loadFile (String filename) throws
             FileNotFoundException, IOException {
@@ -30,24 +78,62 @@ public class AudioClip {
             // read off the data 
             data = new byte[getDataSize (header)];
             fis.read (data);
+            fis.close ();
         }
     }
 
-    private int getDataSize (byte[] currentHeader) {
+    private int getField (byte[] currentHeader, int start, int end) {
         int size = 0;
-        for (int i = 43; i >= 40; i--) { // convert the 4 bytes to int 
+        for (int i = end; i >= start; i--) { // convert the 4 bytes to int 
             size = size * 256 + currentHeader[i]; 
         }
         return size;
     }
 
-    public void selectEffect (int option) {
+    private int getDataSize (byte[] currentHeader) {
+        return getField(currentHeader, 40, 43);
+    }
+
+    private int getSampleSize (byte[] currentHeader) {
+        return getField(currentHeader, 34, 35) / 8; // in bytes, not bits
+    }
+
+    private byte[] intToBytes (int n) {
+        byte[] bytes = new byte[4];
+        int mask = 255;
+        int j = 0;
+        for (int i = 0; i < 32; i+=8) {
+            bytes[j++] = (byte) (n >>> i & mask);
+        }
+        return bytes;
+    }
+
+    private void insertBytes (byte[] source, byte[] dest, int start) {
+        if ((start + source.length) > dest.length) {
+            throw new IllegalArgumentException ("Array is not long enough");
+        }
+
+        // now add the bytes 
+        for (int i = 0; i < source.length; i++) {
+            dest[start + i] = source[i];
+        }
+    }
+
+    private void updateSize (byte[] currentHeader, int newDataSize) {
+        byte[] dataSize = intToBytes (newDataSize);
+        byte[] fileSize = intToBytes (newDataSize + 36);
+        insertBytes (dataSize, currentHeader, 40);
+        insertBytes (fileSize, currentHeader, 4);
+    }
+
+    public void selectEffect (Option option, EffectArguments args) {
         switch (option) {
-        case 0: // reverse
-            manipulateClip(new Reverse ());
+        case REVERSE: // reverse
+            manipulateClip(new Reverse (args));
             break;
-        default:
-            return;
+        case ECHO:
+            manipulateClip (new Echo (args));
+            break;
         }
     }
 
@@ -56,10 +142,15 @@ public class AudioClip {
     }
 
     public class Reverse implements Effect {
+        private EffectArguments arguments;
+
+        public Reverse (EffectArguments args) {
+            arguments = args;
+        }
+
         @Override
         public void perform () {
-            /* TODO: extract this info from the header*/
-            int sampleSize = 2; 
+            int sampleSize = getSampleSize (header); 
             int endEnd = getDataSize(header);
             int endStart = endEnd-sampleSize;
             int startStart = 0;
@@ -82,10 +173,38 @@ public class AudioClip {
         }
     }
 
+    public class Echo implements Effect {
+        private EffectArguments arguments;
+
+        public Echo (EffectArguments args) {
+            arguments = args;
+        }
+
+        @Override 
+        public void perform () {
+            int length = getDataSize (header);
+            ByteBuffer combined = ByteBuffer.allocate (length * arguments.getRepeats () + length);
+            combined.put (data);
+            byte[] lowered = new byte[length];
+            for (int i = 0; i < length; i++) {
+                lowered[i] = (byte) (data[i] * arguments.getVolume ());
+            }
+            // For each repeat add the original sound at 50% volume.
+            for (int n = 1; n <= arguments.getRepeats (); n++) {
+                // Add each byte of the original sound into our combined output sound.
+                combined.put(lowered);
+            }
+            // use the format from the original input stream.
+            data = combined.array ();
+            updateSize (header, length * (arguments.getRepeats() + 1));
+        }
+    }
+
     public void write (String filename) throws IOException {
         FileOutputStream fos = new FileOutputStream (filename);
         fos.write (header);
         fos.write (data);
+        fos.close ();
     }
 
     public static void main (String[] args) throws
@@ -93,7 +212,8 @@ public class AudioClip {
         AudioClip audioClip = new AudioClip ();
         AudioClip.AudioFile audioFile = audioClip.new AudioFile ();
         audioFile.loadFile (args[0]);
-        audioClip.selectEffect(0);
+        audioClip.selectEffect(AudioClip.Option.ECHO, audioClip.new
+        EffectArguments ().setVolume((float) 0.1));
         audioClip.write ("output.wav");
     }
 }
