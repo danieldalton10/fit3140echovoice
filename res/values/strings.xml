@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MainActivity</string>
+    <string name="app_name">VTamper</string>
+    <string name="btn_echo">Echo</string>
+    <string name="btn_load">Load</string>
+    <string name="btn_play">Play</string>
+    <string name="btn_record">Record</string>
+    <string name="btn_reverse">Reverse</string>
+    <string name="btn_save">Save file</string>
+    <string name="btn_share">Share</string>
+    <string name="main_title">VTamper</string>
 </resources>

@@ -1,3 +1,5 @@
+package com.example.vtamper;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -205,15 +207,5 @@ public class AudioClip {
         fos.write (header);
         fos.write (data);
         fos.close ();
-    }
-
-    public static void main (String[] args) throws
-        FileNotFoundException, IOException { 
-        AudioClip audioClip = new AudioClip ();
-        AudioClip.AudioFile audioFile = audioClip.new AudioFile ();
-        audioFile.loadFile (args[0]);
-        audioClip.selectEffect(AudioClip.Option.ECHO, audioClip.new
-        EffectArguments ().setVolume((float) 0.1));
-        audioClip.write ("output.wav");
     }
 }

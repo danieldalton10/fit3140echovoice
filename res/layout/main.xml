@@ -7,7 +7,19 @@
 <TextView
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:text="Hello World, MainActivity"
+    android:text="@string/main_title"
     />
+    <Button
+	android:id="@+id/btn_load"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_load"
+	android:onClick="onLoad" />
+    <Button
+	android:id="@+id/btn_rec"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_record"
+	android:onClick="onRecord" />
 </LinearLayout>
 
