@@ -1,5 +1,6 @@
 package com.example.vtamper;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -202,8 +203,8 @@ public class AudioClip {
         }
     }
 
-    public void write (String filename) throws IOException {
-        FileOutputStream fos = new FileOutputStream (filename);
+    public void write (File file) throws IOException {
+        FileOutputStream fos = new FileOutputStream (file);
         fos.write (header);
         fos.write (data);
         fos.close ();
