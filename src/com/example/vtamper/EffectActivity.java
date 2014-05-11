@@ -26,13 +26,11 @@ public class EffectActivity extends Activity
     private final String VTAMPER_DIR = "VTamper clips";
     private AudioClip audioClip;
     private Context context;
-    private String loadFilePath;
     private boolean echo = false;
     private boolean reversed = false;
     private boolean startPlay = true;
     private MediaPlayer audioPlayer;
     private File tmpFile = null;
-    final int PICK_WAVE = 1;
     final String TMP_FILE = "vtamper_clip_shared.wav";
 
     /** Called when the activity is first created. */
@@ -43,7 +41,9 @@ public class EffectActivity extends Activity
         setContentView(R.layout.effect);
         context = getApplicationContext();
         audioClip = new AudioClip ();
-        load ();
+        Intent intent = getIntent();
+        String path = intent.getExtras().getString("filePath");
+        loadFile (path);
     }
 
     @Override
@@ -58,16 +58,7 @@ public class EffectActivity extends Activity
         super.onDestroy ();
     }
 
-    void load () {
-        Intent chooseFile;
-        Intent intent;
-        chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-        chooseFile.setType("audio/x-wav/*"); // Doesn't really work for some reason
-        intent = Intent.createChooser(chooseFile, "Choose a file");
-        startActivityForResult(intent, PICK_WAVE);
-    }
-
-    void handleLoadFile (String filename) {
+    void loadFile (String filename) {
         AudioClip.AudioFile audioFile = audioClip.new AudioFile ();
         int duration = Toast.LENGTH_SHORT;
         CharSequence text = "";
@@ -100,22 +91,6 @@ public class EffectActivity extends Activity
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode) {
-        case PICK_WAVE: {
-            if (resultCode == RESULT_OK){
-                Uri uri = data.getData();
-                String filePath = uri.getPath();
-                Log.d(TAG, "path = "+filePath);
-                handleLoadFile (filePath);
-                return;
-            }
-        }
-        }
-        handleLoadFile (""); // A way of handling errors
     }
 
     public void onReverse (View view) {
