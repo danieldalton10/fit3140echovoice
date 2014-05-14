@@ -17,7 +17,9 @@ import android.widget.Toast;
 import com.example.vtamper.AudioClip;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.IOException;
 
 public class EffectActivity extends Activity
@@ -59,39 +61,53 @@ public class EffectActivity extends Activity
     }
 
     void loadFile (String filename) {
+        boolean open = false;
         AudioClip.AudioFile audioFile = audioClip.new AudioFile ();
         int duration = Toast.LENGTH_SHORT;
         CharSequence text = "";
-        if (filename.equals ("")) {
-            text = "An error occurred loading the file.";
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            finish ();
+        InputStream is = null;
+        try {
+            Log.d(TAG, "Filename: "+filename);
+            Uri uri = Uri.parse (filename);
+            if (uri.getScheme ().equals("content")) {
+                is = getContentResolver().openInputStream(uri);
+            } else { // raw file path
+                is = new FileInputStream (uri.getPath ());
+                Log.d(TAG, "available: "+is.available ());
+                Log.d(TAG, "path: "+uri.getPath ());
+            }
+            open = true;
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found");
+        } catch (IOException e) {
+            Log.d(TAG, "an io exception occurred");
         }
 
-        try {
-            audioFile.loadFile (filename);
-        } catch (FileNotFoundException e) {
-            text = "The file was not found.";
+        if (open && is != null) {
+            try {
+                audioFile.loadFile (is);
+                text = "Audio loaded";
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            } catch (IOException e) {
+                Log.d(TAG, "Got io error");
+                open = false;
+            } catch (IllegalArgumentException e) {
+                Log.d(TAG, "no data");
+                open = false;
+            } catch (Exception e) {
+                open = false; // Something else is wrong eg. wrong format
+            }
+        }
+
+        if (!open) {
+            text = "Could not load the selected file.";
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-            finish ();
-        } catch (IOException e) {
-            text = "An IO Error has occurred.";
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            finish ();
-        } catch (Exception e) { // All exceptions are the same to us the file didn't load in any case
-            text = "There was a problem loading the file";
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            finish ();
-        } finally {
-            text = "Audio loaded";
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
+            finishAffinity ();
         }
     }
+
 
     public void onReverse (View view) {
         int duration = Toast.LENGTH_SHORT;

@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 public class MainActivity extends Activity
 {
+    private final String TAG = "VTAMPER";
     final int PICK_WAVE = 1;
 
     /** Called when the activity is first created. */
@@ -23,7 +25,7 @@ public class MainActivity extends Activity
         Intent chooseFile;
         Intent intent;
         chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-        chooseFile.setType("audio/x-wav/*"); // Doesn't really work for some reason
+        chooseFile.setType("audio/*"); // Doesn't really work for some reason
         intent = Intent.createChooser(chooseFile, "Choose a file");
         startActivityForResult(intent, PICK_WAVE);
     }
@@ -34,9 +36,7 @@ public class MainActivity extends Activity
         case PICK_WAVE: {
             if (resultCode == RESULT_OK){
                 Uri uri = data.getData();
-                String filePath = uri.getPath();
-                goToEffect (filePath);
-                return;
+                goToEffect (uri.toString ());
             }
         }
         }

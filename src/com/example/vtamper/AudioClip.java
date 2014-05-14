@@ -1,9 +1,10 @@
 package com.example.vtamper;
 
+import android.util.Log;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -70,9 +71,8 @@ public class AudioClip {
     }
 
     public class AudioFile {
-        public void loadFile (String filename) throws
-            FileNotFoundException, IOException {
-            FileInputStream fis = new FileInputStream (filename);
+        public void loadFile (InputStream fis) throws IOException, IllegalArgumentException {
+            //            FileInputStream fis = new FileInputStream (filename);
             // read off the header 
             int j = 0;
             for (int i = 0; i < 44; i++) {
@@ -82,6 +82,10 @@ public class AudioClip {
             data = new byte[getDataSize (header)];
             fis.read (data);
             fis.close ();
+            Log.d ("VTAMPER", "Size of data: "+data.length);
+            if (data.length == 0) {
+                throw new IllegalArgumentException ("File has no data");
+            }
         }
     }
 
