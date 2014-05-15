@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">VTamperPrototype</string>
+    <string name="button_load_text">Load</string>
+    <string name="button_save">Save</string>
+    <string name="file_path">File path: </string>
+</resources>

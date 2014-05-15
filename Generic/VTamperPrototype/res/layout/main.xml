@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top"
+    android:orientation="horizontal" >
+
+     
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    
+    <EditText
+      android:id="@+id/file_path"
+      android:layout_width = "match_parent"
+      android:layout_height="wrap_content"
+      android:hint="@string/file_path"/>
+    
+   		  <LinearLayout
+      		  android:layout_width="match_parent"
+      		  android:layout_height="wrap_content"
+      		  android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/btn_load"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:onClick="loadFile"
+        android:text="@string/button_load_text" 
+    />
+    
+    <TextView
+        android:id="@+id/text_or"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="or" />
+    
+
+	  <Button
+     	 android:id="@+id/button_rec"
+  	 	 android:layout_width="wrap_content"
+  	  	 android:layout_weight="1"
+     	 android:layout_height="wrap_content"
+     	 android:text="Record" 
+      	 android:onClick="onRecord"
+      />
+     
+	</LinearLayout>
+	
+ 
+	
+   	<Button
+	    android:id="@+id/button_modify"
+        android:layout_width="300px" 
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Modify"
+	android:onClick="onModify" /> 
+	  />
+     
+     
+     <Button
+	    android:id="@+id/button_play"
+        android:layout_width="300px"
+        android:layout_height="wrap_content"
+        android:text="Play"
+        android:layout_gravity="center"
+	    android:onClick="onPlay" /> 
+	    
+     
+     
+      <LinearLayout
+      		  android:layout_width="match_parent"
+      		  android:layout_height="wrap_content"
+      		  android:orientation="horizontal">
+
+	<Button
+	    android:id="@+id/button_share"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Share"
+        android:onClick="onShare" />
+    
+    </LinearLayout>
+     
+	
+	</LinearLayout>
+    
+ 
+    
+
+    
+</LinearLayout>
