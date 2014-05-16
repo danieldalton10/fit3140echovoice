@@ -19,12 +19,9 @@ public class AudioClip {
 
     private byte[] header;
     private byte[] data;
-    private byte[] newHeader;
-    private byte[] newData;
 
     AudioClip () {
         this.header = new byte[44];
-        this.newHeader = new byte[44];
     }
 
     public class EffectArguments {
