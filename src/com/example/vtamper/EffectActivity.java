@@ -62,6 +62,7 @@ public class EffectActivity extends Activity
     }
 
     void loadFile (String filename) {
+        Log.d(TAG, "file is " + filename);
         boolean open = false;
         AudioClip.AudioFile audioFile = audioClip.new AudioFile ();
         int duration = Toast.LENGTH_SHORT;
