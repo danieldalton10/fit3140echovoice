@@ -60,6 +60,11 @@ public class EffectActivity extends Activity
         }
         super.onDestroy ();
     }
+    
+    /**
+     * Called from the MainActivity onLoad after a file is selected
+     * @param filename
+     */
 
     void loadFile (String filename) {
         Log.d(TAG, "file is " + filename);
@@ -111,6 +116,11 @@ public class EffectActivity extends Activity
     }
 
 
+    /**
+     * Called when 'reverse' button is press
+     * To reverse a sound clip
+     * @param view
+     */
     public void onReverse (View view) {
         EditText editText = (EditText) findViewById(R.id.start_time);
         double start;
@@ -148,6 +158,11 @@ public class EffectActivity extends Activity
         toast.show();
     }
 
+    /**
+     * Called when 'Echo' button is pressed
+     * Resulted sound clip will be echo'ed
+     * @param view
+     */
     public void onEcho (View view) {
         EditText editText = (EditText) findViewById(R.id.repeats);
         int repeats;
@@ -201,11 +216,17 @@ public class EffectActivity extends Activity
         audioClip.write (file);
         return file;
     }
+    
+    /**
+     * Called when the “save" button is pressed
+     * Save the sound clip into the device
+     * @param view
+     */
 
     public void onSave (View view) {
         int duration = Toast.LENGTH_SHORT;
         CharSequence text;
-        String filename = "vtamper_clip_" + System.currentTimeMillis() + ".wav";
+        String filename = "vtamper_clip_" + System.currentTimeMillis() + ".wav"; //generate unique filename
         try {
             File file = writeFile (filename);
             // Tell the media scanner about the new file so that it is
@@ -226,6 +247,10 @@ public class EffectActivity extends Activity
         toast.show();
     }
 
+    /**
+     * Called when the "Play" button is pressed
+     * @param view
+     */
     public void onPlay (View view) {
 
         String path;
@@ -284,6 +309,11 @@ public class EffectActivity extends Activity
         audioPlayer = null;
     } 
 
+    /**
+     * Called when shared button is pressed
+     * Share the sound clip to suitable installed application
+     * @param view
+     */
     public void onShare(View view) {
         String path;
         try {

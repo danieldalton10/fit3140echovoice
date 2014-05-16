@@ -8,7 +8,13 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+/**
+ * A class to manipulate the sound clip with the effects (Echo and Reverse) implemented within.
+ * @author Daniel Dalton and Choon Yin Yeap
+ * @since May 2014
+ */
 public class AudioClip {
+	
     public enum Option {
         REVERSE, ECHO
     }
@@ -19,11 +25,21 @@ public class AudioClip {
 
     private byte[] header;
     private byte[] data;
+    private byte[] newHeader;
+    private byte[] newData;
 
-    AudioClip () {
+    public AudioClip () {
         this.header = new byte[44];
+        this.newHeader = new byte[44];
     }
 
+    /**
+     * 
+     * A class that gas the functionalities to control the AudioClip's volume, start, end and numberofRepeat
+     * @author Daniel Dalton
+     * @since  May 2014
+     *
+     */
     public class EffectArguments {
         private float volumeFactor = 1;
         private int start = 0;
@@ -66,6 +82,13 @@ public class AudioClip {
             return this;
         }
     }
+    
+    /**
+     * A class to convert a file to byteStrea,
+     * @author  Daniel Dalton
+     * @since 	May 2014
+     *
+     */
 
     public class AudioFile {
         public void loadFile (InputStream fis) throws IOException, IllegalArgumentException {
@@ -86,7 +109,14 @@ public class AudioClip {
         }
     }
 
-    private int getField (byte[] currentHeader, int start, int end) {
+    /**
+     * To get the field of a sound clip and returns its size
+     * @param currentHeader
+     * @param start
+     * @param end
+     * @return size
+     */
+    public int getField (byte[] currentHeader, int start, int end) {
         int size = 0;
         for (int i = end; i >= start; i--) { // convert the 4 bytes to int 
             size = size * 256 + currentHeader[i]; 
@@ -110,7 +140,12 @@ public class AudioClip {
         return (double) data.length / getField (header, 28, 31);
     }
 
-    private byte[] intToBytes (int n) {
+    /**
+     * Convert integer to byteStream
+     * @param n
+     * @return
+     */
+    public byte[] intToBytes (int n) {
         byte[] bytes = new byte[4];
         int mask = 255;
         int j = 0;
@@ -138,12 +173,17 @@ public class AudioClip {
         insertBytes (fileSize, currentHeader, 4);
     }
 
+   /**
+    * Choose the available effects i.e. Echo and Reverse 
+    * @param option
+    * @param args
+    */
     public void selectEffect (Option option, EffectArguments args) {
         switch (option) {
         case REVERSE: // reverse
-            manipulateClip(new Reverse (args));
+            manipulateClip(new Reverse (args)); 
             break;
-        case ECHO:
+        case ECHO: //echo
             manipulateClip (new Echo (args));
             break;
         }
@@ -166,6 +206,12 @@ public class AudioClip {
         }
     }
 
+    /**
+     * A class of reverse Effect that enables user to reverse the selected sound clip in WAVE Format
+     * @author Daniel Dalton
+     * @since  May 2014
+     *
+     */
     public class Reverse implements Effect {
         private EffectArguments arguments;
 
@@ -201,6 +247,12 @@ public class AudioClip {
         }
     }
 
+    /**
+     * A class of echo Effect that enables user to echo the selected sound clip in WAVE Format
+     * @author Daniel Dalton
+     * @since  May 2014
+     *
+     */
     public class Echo implements Effect {
         private EffectArguments arguments;
 
@@ -230,6 +282,11 @@ public class AudioClip {
         }
     }
 
+    /**
+     * Write a file with input of file
+     * @param file
+     * @throws IOException
+     */
     public void write (File file) throws IOException {
         FileOutputStream fos = new FileOutputStream (file);
         fos.write (header);
