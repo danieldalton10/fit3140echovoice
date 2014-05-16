@@ -152,7 +152,7 @@ public class RecordActivity extends Activity
         long totalAudioLen = 0;
         long totalDataLen = totalAudioLen + 36;
         long longSampleRate = RECORDER_SAMPLERATE;
-        int channels = 2;
+        int channels = 1; // mono 
         long byteRate = RECORDER_BPP * RECORDER_SAMPLERATE * channels/8;
                 
         byte[] data = new byte[bufferSize];
