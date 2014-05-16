@@ -29,20 +29,20 @@ public class AudioClip {
 
     public class EffectArguments {
         private float volumeFactor = 1;
-        private int startTime = 0;
-        private int endTime = -1;
+        private int start = 0;
+        private int end = getDataSize (header);
         private int repeats = 1;
 
         public float getVolume () {
             return volumeFactor;
         }
 
-        public int getStartTime () {
-            return startTime;
+        public int getStart () {
+            return start;
         }
 
-        public int getEndTime () {
-            return endTime;
+        public int getEnd () {
+            return end;
         }
 
         public int getRepeats () {
@@ -54,13 +54,13 @@ public class AudioClip {
             return this;
         }
 
-        public EffectArguments setStart (int start) {
-            startTime = start;
+        public EffectArguments setStart (double start) {
+            this.start = getTimeIndex (header, start);
             return this;
         }
 
-        public EffectArguments setEnd (int end) {
-            endTime = end;
+        public EffectArguments setEnd (double end) {
+            this.end = getTimeIndex(header, end);
             return this;
         }
 
@@ -103,6 +103,10 @@ public class AudioClip {
 
     private int getSampleSize (byte[] currentHeader) {
         return getField(currentHeader, 34, 35) / 8; // in bytes, not bits
+    }
+
+    private int getTimeIndex (byte[] header, double time) {
+        return (int) ((double) getField (header, 28, 31) * time);
     }
 
     private byte[] intToBytes (int n) {
@@ -148,6 +152,19 @@ public class AudioClip {
         effect.perform ();
     }
 
+    private void setData (EffectArguments arguments) {
+        int start = arguments.getStart ();
+        int end = arguments.getEnd ();
+        if (start != 0 || end != getDataSize (header)) {
+            int length = arguments.getEnd () - arguments.getStart ();
+            byte[] tempData = new byte[length];
+            for (int i = start; i < end; i++) {
+                tempData[i-start] = data[i];
+            }
+            data = tempData;
+        }
+    }
+
     public class Reverse implements Effect {
         private EffectArguments arguments;
 
@@ -157,11 +174,13 @@ public class AudioClip {
 
         @Override
         public void perform () {
+            setData (arguments);
             int sampleSize = getSampleSize (header); 
-            int endEnd = getDataSize(header);
-            int endStart = endEnd-sampleSize;
+            int endEnd = data.length; // header is out of date currently
             int startStart = 0;
+            int endStart = endEnd-sampleSize;
             int startEnd = sampleSize;
+            int length = data.length;
 
             while (startEnd <= endStart) {
                 byte[] temp = new byte[sampleSize];
@@ -177,6 +196,7 @@ public class AudioClip {
                 endStart-=sampleSize;
                 endEnd-=sampleSize;
             }
+            updateSize (header, length);
         }
     }
 
@@ -189,12 +209,14 @@ public class AudioClip {
 
         @Override 
         public void perform () {
-            int length = getDataSize (header);
+            setData (arguments);
+            int length = data.length; // header out of date currently
             ByteBuffer combined = ByteBuffer.allocate (length * arguments.getRepeats () + length);
             combined.put (data);
             byte[] lowered = new byte[length];
+            int j = 0;
             for (int i = 0; i < length; i++) {
-                lowered[i] = (byte) (data[i] * arguments.getVolume ());
+                lowered[j++] = (byte) (data[i] * arguments.getVolume ());
             }
             // For each repeat add the original sound at 50% volume.
             for (int n = 1; n <= arguments.getRepeats (); n++) {
