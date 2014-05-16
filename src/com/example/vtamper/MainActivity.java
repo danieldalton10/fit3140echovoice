@@ -49,7 +49,7 @@ public class MainActivity extends Activity
     }
 
     public void onRecord (View view) {
-        Intent intent = new Intent (this, RecorderActivity.class);
+        Intent intent = new Intent (this, RecordActivity.class);
         startActivity (intent);        
     }
 }
