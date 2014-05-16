@@ -8,5 +8,8 @@
     <string name="btn_reverse">Reverse</string>
     <string name="btn_save">Save file</string>
     <string name="btn_share">Share</string>
+    <string name="end_time">End position (sec)</string>
     <string name="main_title">VTamper</string>
+    <string name="repeats">Repeats</string>
+    <string name="start_time">Start position (sec)</string>
 </resources>

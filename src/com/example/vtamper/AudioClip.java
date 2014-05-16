@@ -109,6 +109,10 @@ public class AudioClip {
         return (int) ((double) getField (header, 28, 31) * time);
     }
 
+    public double getDuration () {
+        return (double) data.length / getField (header, 28, 31);
+    }
+
     private byte[] intToBytes (int n) {
         byte[] bytes = new byte[4];
         int mask = 255;

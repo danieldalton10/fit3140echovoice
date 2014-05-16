@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.vtamper.AudioClip;
@@ -110,9 +111,32 @@ public class EffectActivity extends Activity
 
 
     public void onReverse (View view) {
+        EditText editText = (EditText) findViewById(R.id.start_time);
+        double start;
+        try {
+            start = Double.parseDouble (editText.getText().toString ());
+        } catch (Exception e) {
+            start = 0;
+        }
+        editText = (EditText) findViewById(R.id.end_time);
+        double end;
+        try {
+            end = Double.parseDouble (editText.getText().toString ());
+        } catch (Exception e) {
+            end = audioClip.getDuration ();
+        }
+
+        if (end < 0 || end > audioClip.getDuration ()) {
+            end = audioClip.getDuration ();
+        }
+        if (start < 0 || start > audioClip.getDuration ()) {
+            start = 0;
+        }
         int duration = Toast.LENGTH_SHORT;
         CharSequence text;
-        audioClip.selectEffect(AudioClip.Option.REVERSE, audioClip.new EffectArguments ());
+        audioClip.selectEffect(AudioClip.Option.REVERSE, audioClip.new
+                               EffectArguments ().setStart
+                               (start).setEnd (end));
         reversed = !reversed; // reversing the reverse track gives back the normal original track
         if (reversed) {
             text = "The track has been reversed";
@@ -124,9 +148,44 @@ public class EffectActivity extends Activity
     }
 
     public void onEcho (View view) {
+        EditText editText = (EditText) findViewById(R.id.repeats);
+        int repeats;
+        try {
+            repeats = Integer.parseInt (editText.getText().toString ());
+        } catch (Exception e) {
+            repeats = 0;
+        }
+        if (repeats < 1) {
+            repeats = 1;
+        }
+
+        editText = (EditText) findViewById(R.id.start_time);
+        double start;
+        try {
+            start = Double.parseDouble (editText.getText().toString ());
+        } catch (Exception e) {
+            start = 0;
+        }
+        editText = (EditText) findViewById(R.id.end_time);
+        double end;
+        try {
+            end = Double.parseDouble (editText.getText().toString ());
+        } catch (Exception e) {
+            end = audioClip.getDuration ();
+        }
+
+        if (end < 0 || end > audioClip.getDuration ()) {
+            end = audioClip.getDuration ();
+        }
+        if (start < 0 || start > audioClip.getDuration ()) {
+            start = 0;
+        }
+
         int duration = Toast.LENGTH_SHORT;
         CharSequence text = "Added echo effect";
-        audioClip.selectEffect(AudioClip.Option.ECHO, audioClip.new EffectArguments ().setVolume ((float) 0.3));
+        audioClip.selectEffect(AudioClip.Option.ECHO, audioClip.new
+        EffectArguments ().setVolume ((float) 0.3).setStart
+                               (start).setEnd (end).setRepeats (repeats));
         echo = true;
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
