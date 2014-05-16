@@ -1,6 +1,6 @@
 package com.example.vtamper;
 
-
+import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,12 +8,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.net.Uri;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
+import android.net.Uri;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +25,7 @@ public class RecorderActivity extends Activity {
     private static final String AUDIO_RECORDER_FOLDER = "AudioRecorder";
     private static final String AUDIO_RECORDER_TEMP_FILE = "record_temp.raw";
     private static final int RECORDER_SAMPLERATE = 44100;
-    private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
+    private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
     private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
         
     private AudioRecord recorder = null;
@@ -41,7 +41,7 @@ public class RecorderActivity extends Activity {
         setButtonHandlers();
         enableButtons(false);
         
-        bufferSize = AudioRecord.getMinBufferSize(8000,
+        bufferSize = AudioRecord.getMinBufferSize(44100,
                                                   AudioFormat.CHANNEL_CONFIGURATION_MONO,
                                                   AudioFormat.ENCODING_PCM_16BIT);
     }
@@ -59,7 +59,6 @@ public class RecorderActivity extends Activity {
         enableButton(R.id.btnStart,!isRecording);
         enableButton(R.id.btnStop,isRecording);
     }
-
         
     private String getFilename(){
         String filepath = Environment.getExternalStorageDirectory().getPath();
@@ -127,7 +126,11 @@ public class RecorderActivity extends Activity {
             while(isRecording){
                 read = recorder.read(data, 0, bufferSize);
                                 
+                if(AudioRecord.ERROR_INVALID_OPERATION == read){
+                    Log.d("Recording", "Invalid recorder object");
+                }
                 if(AudioRecord.ERROR_INVALID_OPERATION != read){
+                    Log.d("RECORDER", "Attempting to write.");
                     try {
                         os.write(data);
                     } catch (IOException e) {
@@ -157,13 +160,9 @@ public class RecorderActivity extends Activity {
             recordingThread = null;
         }
                 
-        String filename = "rec_" + System.currentTimeMillis() + ".wav";
-        filename = copyWaveFile(getTempFilename(),filename);
+        copyWaveFile(getTempFilename(),"rec_"+System.currentTimeMillis
+                     ()+".wav");
         deleteTempFile();
-        Intent intent = new Intent (this, EffectActivity.class);
-        Uri uri = Uri.parse (filename);
-        intent.putExtra("filePath", uri.toString ());
-        startActivity (intent);
     }
 
     private void deleteTempFile() {
@@ -172,8 +171,13 @@ public class RecorderActivity extends Activity {
         file.delete();
     }
         
-    private String copyWaveFile(String inFilename,String outFilename){
-        File file = null;
+    private void copyWaveFile(String inFilename,String outFilename){
+        File path = Environment.getExternalStoragePublicDirectory(
+                                                                  VTAMPER_DIR);
+        File file = new File(path, outFilename);
+        // Make sure the vtamper directory exists.
+        path.mkdirs();
+        String filename = file.toString ();
         FileInputStream in = null;
         FileOutputStream out = null;
         long totalAudioLen = 0;
@@ -186,11 +190,7 @@ public class RecorderActivity extends Activity {
                 
         try {
             in = new FileInputStream(inFilename);
-            File path = Environment.getExternalStoragePublicDirectory(
-                                                                      VTAMPER_DIR);
-            file = new File(path, outFilename);
-            path.mkdirs();
-            out = new FileOutputStream (file);
+            out = new FileOutputStream(filename);
             totalAudioLen = in.getChannel().size();
             totalDataLen = totalAudioLen + 36;
                         
@@ -210,7 +210,12 @@ public class RecorderActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return file.getPath ();
+        MediaScannerConnection.scanFile(this,
+                                        new String[] { file.toString() }, null,
+                                        new MediaScannerConnection.OnScanCompletedListener() {
+                                            public void onScanCompleted(String path, Uri uri) {
+                                            }
+                                        });
     }
 
     private void WriteWaveFileHeader(
@@ -285,6 +290,7 @@ public class RecorderActivity extends Activity {
                                         
                     enableButtons(false);
                     stopRecording();
+                                        
                     break;
                 }
                 }
