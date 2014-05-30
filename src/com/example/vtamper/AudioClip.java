@@ -2,7 +2,6 @@ package com.example.vtamper;
 
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -166,29 +165,60 @@ public class AudioClip {
         insertBytes (fileSize, currentHeader, 4);
     }
 
+    private boolean reachDefault = false;
    /**
     * Choose the available effects i.e. Echo and Reverse 
     * @param option
     * @param args
     */
-    public Option selectEffect (Option option, EffectArguments args) {
-        Option ret = null;
+    public void selectEffect (Option option, EffectArguments args) {
         switch (option) {
         case REVERSE: // reverse
             manipulateClip(new Reverse (args)); 
-            ret = Option.REVERSE;
             break;
         case ECHO: //echo
             manipulateClip (new Echo (args));
-            ret = Option.ECHO;
             break;
         case CLIPPING: // Clipping effect
             manipulateClip (new Clipping (args));
-            ret = Option.CLIPPING;
             break;
+         default:
+        	 reachDefault();
+        	 break;
         }
-        return ret;
     }
+    
+    
+    public void selectEffectDuplicate (Option option, EffectArguments args) {
+        switch (option) {
+        case REVERSE: // reverse
+            //manipulateClip(new Reverse (args)); 
+            option = Option.REVERSE;
+            break;
+        case ECHO: //echo
+          //  manipulateClip (new Echo (args));
+            option = Option.ECHO;
+            break;
+        case CLIPPING: // Clipping effect
+            //manipulateClip (new Clipping (args));
+            option = Option.CLIPPING;
+            break;
+         default:
+        	 //reachDefault();
+        	 break;
+        }
+    }
+    
+    private boolean reachDefault(){
+    	reachDefault = true; 
+    	return reachDefault;
+    }
+    
+    public boolean getReachDefault() {
+    	return reachDefault;
+    }
+    
+    
 
     private void manipulateClip (Effect effect) {
         effect.perform ();
@@ -285,7 +315,7 @@ public class AudioClip {
     }
 
     public class Clipping implements Effect {
-        private static final int CLIPPING_FACTOR = 3;
+        private static final int CLIPPING_FACTOR = 2;
         private EffectArguments arguments;
 
         public Clipping (EffectArguments args) {
@@ -319,12 +349,5 @@ public class AudioClip {
         fos.write (header);
         fos.write (data);
         fos.close ();
-    }
-
-    public ByteArrayOutputStream write () throws IOException {
-        ByteArrayOutputStream b = new ByteArrayOutputStream ();
-        b.write (header);
-        b.write (data);
-        return b;
     }
 }

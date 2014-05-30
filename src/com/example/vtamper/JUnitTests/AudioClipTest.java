@@ -9,6 +9,7 @@ import android.test.AndroidTestCase;
 import junit.framework.TestCase;
 import com.example.vtamper.*;
 import com.example.vtamper.AudioClip.EffectArguments;
+import com.example.vtamper.AudioClip.Option;
 
 /*
  * An AudioClipTest to test the method in AudioClip
@@ -16,14 +17,6 @@ import com.example.vtamper.AudioClip.EffectArguments;
 
 public class AudioClipTest extends AndroidTestCase {
 
-	@Test
-	/*
-	 * To test the constructor method of audioClip();
-	 */
-	public void testConstructor() {
-		AudioClip audioClip = new AudioClip();
-		assertNotNull(audioClip);
-	}
 	
 	public void testEffectArgumentsGetVolume() {
 		
@@ -77,21 +70,15 @@ public class AudioClipTest extends AndroidTestCase {
 	
 	}
 	
-	public void testLoadFile() {
-		
-		
-		
-		
-	}
-	
-	public void testGetDuration() {
-		AudioClip audioClip = new AudioClip();
-	
-		
-	}
 	
 	public void testSelectEffect() {
 		
+		AudioClip audioClip = new AudioClip(); 
+		AudioClip.EffectArguments args = audioClip.new EffectArguments();
+	
+		audioClip.selectEffectDuplicate(Option.REVERSE, args);
+
+		assertFalse(audioClip.getReachDefault());
 		
 	}
 	
