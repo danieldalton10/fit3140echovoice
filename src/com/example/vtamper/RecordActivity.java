@@ -113,6 +113,11 @@ public class RecordActivity extends Activity
     }
 
     public void onStopRecording (View view) {
+        Button button = (Button) findViewById(R.id.btn_start_record);
+        button.setEnabled (true);
+        button = (Button) findViewById(R.id.btn_stop);
+        button.setEnabled (false);
+
         if (null != recorder){
             isRecording = false;
                         
