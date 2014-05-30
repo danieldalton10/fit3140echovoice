@@ -35,7 +35,7 @@
         android:layout_height="50dp"
         android:text="Clipping"
         android:layout_marginTop = "10dp"
-		android:onClick="onReverse" />
+		android:onClick="onClipping" />
     
     </LinearLayout>
     

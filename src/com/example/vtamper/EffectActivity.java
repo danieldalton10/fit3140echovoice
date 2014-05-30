@@ -206,6 +206,38 @@ public class EffectActivity extends Activity
         toast.show();
     }
 
+    public void onClipping (View view) {
+        EditText editText = (EditText) findViewById(R.id.start_time);
+        double start;
+        try {
+            start = Double.parseDouble (editText.getText().toString ());
+        } catch (Exception e) {
+            start = 0;
+        }
+        editText = (EditText) findViewById(R.id.end_time);
+        double end;
+        try {
+            end = Double.parseDouble (editText.getText().toString ());
+        } catch (Exception e) {
+            end = audioClip.getDuration ();
+        }
+
+        if (end < 0 || end > audioClip.getDuration ()) {
+            end = audioClip.getDuration ();
+        }
+        if (start < 0 || start > audioClip.getDuration ()) {
+            start = 0;
+        }
+
+        int duration = Toast.LENGTH_SHORT;
+        CharSequence text = "Added clipping effect";
+        audioClip.selectEffect(AudioClip.Option.CLIPPING, audioClip.new
+        EffectArguments ().setStart
+                               (start).setEnd (end));
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+
     private File writeFile (String filename) throws IOException {
         File path = Environment.getExternalStoragePublicDirectory(
                                                                   VTAMPER_DIR);

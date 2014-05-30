@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.apache.commons.io.EndianUtils;
 /**
  * A class to manipulate the sound clip with the effects (Echo and Reverse) implemented within.
  * @author Daniel Dalton and Choon Yin Yeap
@@ -16,7 +17,7 @@ import java.nio.ByteBuffer;
 public class AudioClip {
 	
     public enum Option {
-        REVERSE, ECHO
+        REVERSE, ECHO, CLIPPING
     }
 
     private interface Effect {
@@ -177,6 +178,9 @@ public class AudioClip {
         case ECHO: //echo
             manipulateClip (new Echo (args));
             break;
+        case CLIPPING: // Clipping effect
+            manipulateClip (new Clipping (args));
+            break;
         }
     }
 
@@ -258,9 +262,10 @@ public class AudioClip {
             ByteBuffer combined = ByteBuffer.allocate (length * arguments.getRepeats () + length);
             combined.put (data);
             byte[] lowered = new byte[length];
-            int j = 0;
-            for (int i = 0; i < length; i++) {
-                lowered[j++] = (byte) (data[i] * arguments.getVolume ());
+            for (int i = 0; i < length; i+=2) {
+                short value = EndianUtils.readSwappedShort (data, i);
+                value *= arguments.getVolume ();
+                EndianUtils.writeSwappedShort (lowered, i, value);
             }
             // For each repeat add the original sound at 50% volume.
             for (int n = 1; n <= arguments.getRepeats (); n++) {
@@ -270,6 +275,31 @@ public class AudioClip {
             // use the format from the original input stream.
             data = combined.array ();
             updateSize (header, length * (arguments.getRepeats() + 1));
+        }
+    }
+
+    public class Clipping implements Effect {
+        private static final int CLIPPING_FACTOR = 2;
+        private EffectArguments arguments;
+
+        public Clipping (EffectArguments args) {
+            arguments = args;
+        }
+
+        @Override 
+        public void perform () {
+            setData (arguments);
+            int length = data.length; // header out of date currently
+            for (int i = 0; i < length-1; i+=2) {
+                short value = EndianUtils.readSwappedShort (data, i);
+                value *= CLIPPING_FACTOR;
+                if (value > Short.MAX_VALUE) {
+                    value = Short.MAX_VALUE;
+                } else if (value < Short.MIN_VALUE) {
+                    value = Short.MIN_VALUE;
+                }
+                EndianUtils.writeSwappedShort (data, i, value);
+            }
         }
     }
 
