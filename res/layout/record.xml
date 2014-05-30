@@ -3,23 +3,33 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/realWhite"
     >
-<TextView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/main_title"
-    />
+
+    
+     <ImageView
+        android:id="@+id/recorder"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:src="@drawable/record"
+        android:layout_gravity="center"/>
+     
     <Button
-	android:id="@+id/btn_start_record"
+		android:id="@+id/btn_start_record"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:text="@string/btn_record"
-	android:onClick="onStartRecording" />
+        android:textSize = "32sp"
+		android:onClick="onStartRecording" />
+    
+    
     <Button
-	android:id="@+id/btn_stop"
+		android:id="@+id/btn_stop"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
+        android:layout_marginTop = "10dp"
         android:text="@string/btn_stop"
-	android:onClick="onStopRecording" />
+        android:textSize ="32sp"
+		android:onClick="onStopRecording" />
 </LinearLayout>
 

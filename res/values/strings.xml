@@ -13,5 +13,8 @@
     <string name="main_title">VTamper</string>
     <string name="repeats">Repeats</string>
     <string name="start_time">Start position (sec)</string>
-    <color name="white">#FFF8DC</color>
+    <color name="white">#FFFFDF</color>
+    <color name="red">#B40404</color>
+    <color name="realWhite">#FFFFFF</color>
+    <color name="black">#000000</color>
 </resources>
