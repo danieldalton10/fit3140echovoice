@@ -279,7 +279,7 @@ public class AudioClip {
     }
 
     public class Clipping implements Effect {
-        private static final int CLIPPING_FACTOR = 2;
+        private static final int CLIPPING_FACTOR = 3;
         private EffectArguments arguments;
 
         public Clipping (EffectArguments args) {
