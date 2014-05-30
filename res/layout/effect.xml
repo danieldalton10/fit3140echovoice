@@ -3,42 +3,85 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/realWhite"
     >
-<TextView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/main_title"
-    />
+
+    
+    <LinearLayout 
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:gravity = "center"
+        android:orientation="horizontal">
+        
     <Button
-	android:id="@+id/btn_echo"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+		android:id="@+id/btn_echo"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop = "10dp"
         android:text="@string/btn_echo"
-	android:onClick="onEcho" />
+		android:onClick="onEcho" />
+    
     <Button
-	android:id="@+id/btn_reverse"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+		android:id="@+id/btn_reverse"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:text="@string/btn_reverse"
-	android:onClick="onReverse" />
+        android:layout_marginTop = "10dp"
+		android:onClick="onReverse" />
+    
     <Button
-	android:id="@+id/btn_save"
-        android:layout_width="fill_parent"
+		android:id="@+id/btn_clip"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="Clipping"
+        android:layout_marginTop = "10dp"
+		android:onClick="onReverse" />
+    
+    </LinearLayout>
+    
+     <ImageView
+        android:id="@+id/playerRadio"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:src="@drawable/radioplayer"
+        android:layout_marginTop = "10dp"
+        android:layout_gravity="center"/>
+     
+       <LinearLayout 
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:gravity = "center"
+        android:orientation="horizontal">
+    
+      <Button
+		android:id="@+id/btn_play"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:gravity ="center"
+        android:text="@string/btn_play"
+		android:onClick="onPlay" /> </LinearLayout>
+    
+    <LinearLayout 
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:gravity = "center"
+        android:orientation="horizontal">
+    
+    <Button
+		android:id="@+id/btn_save"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="@string/btn_save"
-	android:onClick="onSave" />
+		android:onClick="onSave" />
+    
     <Button
-	android:id="@+id/btn_share"
-        android:layout_width="fill_parent"
+		android:id="@+id/btn_share"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="@string/btn_share"
-	android:onClick="onShare" />
-    <Button
-	android:id="@+id/btn_play"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_play"
-	android:onClick="onPlay" />
+		android:onClick="onShare" />
+    </LinearLayout>
+ 
     <EditText
       android:id="@+id/start_time"
       android:layout_width="fill_parent"
