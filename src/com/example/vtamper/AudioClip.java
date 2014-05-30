@@ -71,11 +71,17 @@ public class AudioClip {
 
         public EffectArguments setStart (double start) {
             this.start = getTimeIndex (header, start);
+            if (this.start % 2 != 0) {
+                this.start--;
+            }
             return this;
         }
 
         public EffectArguments setEnd (double end) {
             this.end = getTimeIndex(header, end);
+            if (this.end %2 != 0) {
+                this.end--;
+            }
             return this;
         }
 
