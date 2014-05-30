@@ -2,6 +2,7 @@ package com.example.vtamper;
 
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -313,5 +314,12 @@ public class AudioClip {
         fos.write (header);
         fos.write (data);
         fos.close ();
+    }
+
+    public ByteArrayOutputStream write () throws IOException {
+        ByteArrayOutputStream b = new ByteArrayOutputStream ();
+        b.write (header);
+        b.write (data);
+        return b;
     }
 }
