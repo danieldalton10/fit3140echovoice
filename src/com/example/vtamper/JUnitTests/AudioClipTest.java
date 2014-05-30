@@ -3,8 +3,6 @@ package com.example.vtamper.JUnitTests;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Test;
-
 import android.test.AndroidTestCase;
 import junit.framework.TestCase;
 import com.example.vtamper.*;
@@ -71,15 +69,5 @@ public class AudioClipTest extends AndroidTestCase {
 	}
 	
 	
-	public void testSelectEffect() {
-		
-		AudioClip audioClip = new AudioClip(); 
-		AudioClip.EffectArguments args = audioClip.new EffectArguments();
-	
-		audioClip.selectEffectDuplicate(Option.REVERSE, args);
-
-		assertFalse(audioClip.getReachDefault());
-		
-	}
 	
 }
