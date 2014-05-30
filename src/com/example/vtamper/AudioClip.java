@@ -82,30 +82,21 @@ public class AudioClip {
             return this;
         }
     }
-    
-    /**
-     * A class to convert a file to byteStrea,
-     * @author  Daniel Dalton
-     * @since 	May 2014
-     *
-     */
 
-    public class AudioFile {
-        public void loadFile (InputStream fis) throws IOException, IllegalArgumentException {
-            //            FileInputStream fis = new FileInputStream (filename);
-            // read off the header 
-            int j = 0;
-            for (int i = 0; i < 44; i++) {
-                header[j++] = (byte) fis.read ();
-            }
-            // read off the data 
-            data = new byte[getDataSize (header)];
-            fis.read (data);
-            fis.close ();
-            Log.d ("VTAMPER", "Size of data: "+data.length);
-            if (data.length == 0) {
-                throw new IllegalArgumentException ("File has no data");
-            }
+    public void loadFile (InputStream fis) throws IOException, IllegalArgumentException {
+        //            FileInputStream fis = new FileInputStream (filename);
+        // read off the header 
+        int j = 0;
+        for (int i = 0; i < 44; i++) {
+            header[j++] = (byte) fis.read ();
+        }
+        // read off the data 
+        data = new byte[getDataSize (header)];
+        fis.read (data);
+        fis.close ();
+        Log.d ("VTAMPER", "Size of data: "+data.length);
+        if (data.length == 0) {
+            throw new IllegalArgumentException ("File has no data");
         }
     }
 
@@ -116,7 +107,7 @@ public class AudioClip {
      * @param end
      * @return size
      */
-    public int getField (byte[] currentHeader, int start, int end) {
+    private int getField (byte[] currentHeader, int start, int end) {
         int size = 0;
         for (int i = end; i >= start; i--) { // convert the 4 bytes to int 
             size = size * 256 + currentHeader[i]; 
@@ -145,7 +136,7 @@ public class AudioClip {
      * @param n
      * @return
      */
-    public byte[] intToBytes (int n) {
+    private byte[] intToBytes (int n) {
         byte[] bytes = new byte[4];
         int mask = 255;
         int j = 0;

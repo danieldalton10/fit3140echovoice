@@ -69,7 +69,6 @@ public class EffectActivity extends Activity
     void loadFile (String filename) {
         Log.d(TAG, "file is " + filename);
         boolean open = false;
-        AudioClip.AudioFile audioFile = audioClip.new AudioFile ();
         int duration = Toast.LENGTH_SHORT;
         CharSequence text = "";
         InputStream is = null;
@@ -92,7 +91,7 @@ public class EffectActivity extends Activity
 
         if (open && is != null) {
             try {
-                audioFile.loadFile (is);
+                audioClip.loadFile (is);
                 text = "Audio loaded";
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
