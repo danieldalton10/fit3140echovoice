@@ -171,18 +171,23 @@ public class AudioClip {
     * @param option
     * @param args
     */
-    public void selectEffect (Option option, EffectArguments args) {
+    public Option selectEffect (Option option, EffectArguments args) {
+        Option ret = null;
         switch (option) {
         case REVERSE: // reverse
             manipulateClip(new Reverse (args)); 
+            ret = Option.REVERSE;
             break;
         case ECHO: //echo
             manipulateClip (new Echo (args));
+            ret = Option.ECHO;
             break;
         case CLIPPING: // Clipping effect
             manipulateClip (new Clipping (args));
+            ret = Option.CLIPPING;
             break;
         }
+        return ret;
     }
 
     private void manipulateClip (Effect effect) {
